@@ -50,11 +50,11 @@ async fn main() {
             let h = Hotel::new(1, "David Hotel".to_string(), "Bangkok".to_string());
             warp::reply::json(&h)
         });
-    
+
     let routes = warp::get()
         .and(hi)
         .or(hotel)
         .or(properties);
 
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await
+    warp::serve(routes).run(([0, 0, 0, 0], 3030)).await;
 }
