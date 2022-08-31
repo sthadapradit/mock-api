@@ -10,9 +10,10 @@ FROM debian:buster-slim
 
 WORKDIR /usr/local/bin/api
 
-RUN ls -al .
-
 COPY --from=builder /usr/src/target/release .
+COPY --from=builder /usr/src/properties.json .
+
+RUN ls -al .
 
 EXPOSE 3030
 
