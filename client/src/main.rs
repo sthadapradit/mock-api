@@ -1,17 +1,18 @@
 use hyper::Client;
 use http::uri::Uri;
-use hyper::body::HttpBody;
-use std::io;
 use std::sync::{Arc};
 use tokio::sync::Semaphore;
+use stopwatch::{Stopwatch};
+use std::io;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     println!("start");
-    let semaphore = Arc::new(Semaphore::new(100));
+    let semaphore = Arc::new(Semaphore::new(50));
+    let sw = Stopwatch::start_new();
 
-    for i in 1 .. 1000000 {
+    for i in 1 .. 100000000 {
         let permit = semaphore.clone().acquire_owned().await.unwrap();
 
         tokio::spawn(async move {
@@ -21,10 +22,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 Ok(r) => {
                     match hyper::body::to_bytes(r.into_body()).await {
                         Ok(x)=>{
-                            str::from_utf8(x);
-                            println!("{:?}", x.to_ascii_lowercase());
+                            println!("{i}");
+                            // let y = x.to_ascii_lowercase();
+                            // print!("{:?}", y[0]);
                         },
-                        Err(_) => todo!(),
+                        Err(err) => {
+                            println!("err: {err}");
+                        }
                     }
                     drop(permit);
                 },
@@ -36,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         });
     }
 
+    println!("Time Taken {}ms", sw.elapsed_ms());
     let _ = io::stdin().lines();
-    println!("end");
     Ok(())
 }

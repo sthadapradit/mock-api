@@ -10,3 +10,4 @@ hyper = { version = "0.14", features = ["full"] }
 tokio = { version = "1", features = ["full"] }
 futures = "0.3"
 http = "0.2.8"
+stopwatch = "0.0.7"
