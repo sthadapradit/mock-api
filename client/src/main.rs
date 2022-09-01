@@ -1,5 +1,6 @@
 use hyper::Client;
 use http::uri::Uri;
+use hyper::body::HttpBody;
 use std::io;
 use std::sync::{Arc};
 use tokio::sync::Semaphore;
@@ -18,7 +19,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
             let resp = client.get(Uri::from_static("http://127.0.0.1:3030/properties")).await;
             match resp {
                 Ok(r) => {
-                    println!("{i}: {}", r.status());
+                    match hyper::body::to_bytes(r.into_body()).await {
+                        Ok(x)=>{
+                            str::from_utf8(x);
+                            println!("{:?}", x.to_ascii_lowercase());
+                        },
+                        Err(_) => todo!(),
+                    }
                     drop(permit);
                 },
                 Err(err) => {
