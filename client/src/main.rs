@@ -21,15 +21,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let sw = Stopwatch::start_new();
     let client = Client::new();
 
-    for i in 1 .. 100000000 {
+    for i in 1 .. 10000 {
         let permit = semaphore.clone().acquire_owned().await.unwrap();
 
         let tmp_client = client.clone();
         let tmp_url = url.clone();
 
-        if i % 100 == 0 {
-            println!("\nsend {i}");
-        }
+        // if i % 100 == 0 {
+        //     println!("\nsend {i}");
+        // }
 
         
         tokio::spawn(async move {
@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
             match resp {
                 Ok(_r) => {
-                    print!(".");
+                    // print!(".");
                     drop(permit);
                     
                     //     Ok(x)=>{
@@ -59,7 +59,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         });
     }
 
-    println!("Time Taken {}ms", sw.elapsed_ms());
+    println!("Time Taken {}ms for {env_url}", sw.elapsed_ms());
     let _ = io::stdin().lines();
     Ok(())
 }
