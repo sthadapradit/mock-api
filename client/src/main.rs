@@ -3,7 +3,6 @@ use hyper::Client;
 use std::sync::{Arc};
 use tokio::sync::Semaphore;
 use stopwatch::{Stopwatch};
-use std::io;
 use std::env;
 
 #[tokio::main]
@@ -11,8 +10,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     println!("start");
     let env_url: String = env::var("url").expect("$url is not set");    
-    let env_concurrent: String = env::var("concurrent").expect("$parallel is not set");    
-    println!("send req to {env_url}");
+    let env_concurrent: String = env::var("concurrent").expect("$concurrent is not set");    
+    println!("send req to {:?}", env_url);
 
     let url: Uri = env_url.parse()?;
 
@@ -26,30 +25,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
         let tmp_client = client.clone();
         let tmp_url = url.clone();
-
-        // if i % 100 == 0 {
-        //     println!("\nsend {i}");
-        // }
-
         
         tokio::spawn(async move {
             let resp = tmp_client.get(tmp_url).await;
 
             match resp {
-                Ok(_r) => {
-                    // print!(".");
+                Ok(_r) => { 
                     drop(permit);
-                    
-                    //     Ok(x)=>{
-                    //         // println!("{i}");
-                    //         // let y = x.to_ascii_lowercase();
-                    //         // print!("{:?}", y[0]);
-                    //     },
-                    //     Err(err) => {
-                    //         println!("err: {err}");
-                    //     }
-                    // }
-                    // drop(permit);
                 },
                 Err(err) => {
                     println!("error --> {err}");
@@ -59,7 +41,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         });
     }
 
-    println!("Time Taken {}ms for {env_url}", sw.elapsed_ms());
-    let _ = io::stdin().lines();
+    println!("Time Taken {}ms", sw.elapsed_ms());
     Ok(())
 }

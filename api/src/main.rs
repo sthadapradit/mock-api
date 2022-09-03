@@ -24,7 +24,7 @@ impl Hotel {
     }
 }
 
-#[tokio::main]
+#[tokio::main(worker_threads = 8)]
 async fn main() {
     
     let file = File::open("properties.json").unwrap();

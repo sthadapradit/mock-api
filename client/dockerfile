@@ -8,13 +8,8 @@ RUN cargo build --release
 
 FROM debian:buster-slim
 
-WORKDIR /usr/local/bin/api
+WORKDIR /usr/local/bin/client
 
 COPY --from=builder /usr/src/target/release .
-COPY --from=builder /usr/src/properties.json .
 
 RUN ls -al .
-
-EXPOSE 3030
-
-CMD ["./api"]
